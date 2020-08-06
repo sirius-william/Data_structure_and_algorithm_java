@@ -186,25 +186,31 @@ public class SingleLinkedList<T> {
         // 定义一个新的链表
         Member<T> newTemp = new Member<>(0, null, null);
         while (temp != null) {
-            // 取出新的链表中头部的下一个元素（即第一个元素）
-            Member<T> myNext = newTemp.next; // ****
-            // 将旧的链表中的遍历到的元素的下一个单拿出来
-            Member<T> member = null;
-            if (temp.next != null) {
-                // 注意：如果写成member=temp.next，则member和temp都指向了temp.next，后面有一句member.next，则相当于temp.next.next因为是引用类型，temp和member一起变化。为了将二者独立，这里要新创建对象。
-                member = new Member<>(temp.next.no, temp.next.object, temp.next.next); // ****
-            } else {
-                // 当next为null时，说明到了最后一个元素，那么就结束运行
-
-                return newTemp;
-            }
-            // 修改单拿出来的元素的下一个元素位置为新链表中的第一个元素
-            if (member != null) {
-                member.next = myNext;// ****
-            }
-            // 将修改好的单拿出来的元素放到新链表第一个位置，即head.next
-            newTemp.next = member; // ****
-            temp = temp.next;
+//            // 这种方法会改变原表内节点的哈希值内存地址，因为新创建对象了
+//            // 取出新的链表中头部的下一个元素（即第一个元素）
+//            Member<T> myNext = newTemp.next; // ****
+//            // 将旧的链表中的遍历到的元素的下一个单拿出来
+//            Member<T> member = null;
+//            if (temp.next != null) {
+//                // 注意：如果写成member=temp.next，则member和temp都指向了temp.next，后面有一句member.next，则相当于temp.next.next因为是引用类型，temp和member一起变化。为了将二者独立，这里要新创建对象。
+//                member = new Member<>(temp.next.no, temp.next.object, temp.next.next); // ****
+//            } else {
+//                // 当next为null时，说明到了最后一个元素，那么就结束运行
+//
+//                return newTemp;
+//            }
+//            // 修改单拿出来的元素的下一个元素位置为新链表中的第一个元素
+//            if (member != null) {
+//                member.next = myNext;// ****
+//            }
+//            // 将修改好的单拿出来的元素放到新链表第一个位置，即head.next
+//            newTemp.next = member; // ****
+//            temp = temp.next;
+            Member<T> next = temp.next;
+            Member<T> newMember = temp;
+            newMember.next = newTemp.next;
+            newTemp.next = newMember;
+            temp = next;
         }
         // 将整个对象的头部节点定义为新建的头结点，原链表废除至垃圾回收。
         return newTemp;
