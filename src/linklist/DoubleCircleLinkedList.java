@@ -33,24 +33,39 @@ class CircleMember<T> {
             this.next = null;
         }
     }
+
+    @Override
+    public String toString() {
+        String preHash = null;
+        String nextHash = null;
+        if (this.pre != null) {
+            preHash = String.valueOf(pre.hashCode());
+        }
+        if (this.next != null) {
+            nextHash = String.valueOf(next.hashCode());
+        }
+        return "hash:"+String.valueOf(this.hashCode())+
+                "\tno=" + no +
+                "\tpre=" + preHash +
+                "\tval=" + val +
+                "\tnext=" + nextHash;
+    }
 }
 
 public class DoubleCircleLinkedList<T> {
     private CircleMember<T> member;
+    private CircleMember<T> foot;
     // 索引集合
     private ArrayList<Integer> noArray = new ArrayList<>();
 
     public DoubleCircleLinkedList(int no, T val) {
         // 用户指定初始节点的no和数据值
         this.member = new CircleMember<>(no, val, true);
+        this.foot = member;
         // no写入noArray
         noArray.add(no);
     }
 
-    public DoubleCircleLinkedList() {
-        this.member = new CircleMember<>(0, null, true);
-        noArray.add(0);
-    }
 
     /*
      * target：目标位置索引
@@ -67,7 +82,7 @@ public class DoubleCircleLinkedList<T> {
         CircleMember<T> temp = member;
         CircleMember<T> newMember;
         if (direction == 2) {
-            int distance = noArray.indexOf(no);
+            int distance = noArray.indexOf(target);
             int start = member.no;
             // 判断应该顺时针还是逆时针遍历
             reverse = ((distance - start) - (noArray.size())) > 0;
@@ -78,14 +93,16 @@ public class DoubleCircleLinkedList<T> {
                 if (temp.no == target) {
                     switch (location) {
                         case 0 -> {
-                            temp.pre.next = newMember;
-                            newMember.pre = temp.pre;
                             newMember.next = temp;
+                            newMember.pre = temp.pre;
+                            temp.pre.next = newMember;
+                            temp.pre = newMember;
                         }
                         case 1 -> {
-                            temp.next.pre = newMember;
-                            newMember.pre = temp;
                             newMember.next = temp.next;
+                            newMember.pre = temp;
+                            temp.next.pre = newMember;
+                            temp.next = newMember;
                         }
                     }
                     // 将该索引存入数组
@@ -162,6 +179,16 @@ public class DoubleCircleLinkedList<T> {
             temp = reverse ? temp.pre : temp.next;
         }
         return null;
+    }
+    public void print(){
+        CircleMember<T> temp = member;
+        while (true){
+            System.out.println(temp);
+            temp = temp.next;
+            if (temp == member){
+                break;
+            }
+        }
     }
 }
 
